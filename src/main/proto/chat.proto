@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package chat;
+
+option java_multiple_files = true;
+option java_package = "com.langhakers.talki.websocket.grpc.proto";
+option java_outer_classname = "ChatProto";
+
+message GrpcChatMessage {
+  string roomId = 1;
+  string senderId = 2;
+  string senderName = 3;
+  string content = 4;
+  int64 timestamp = 5;
+}
+
+service ChatService {
+  rpc createChatMessage(ChatMessageRequest) returns (ChatMessageResponse);
+  rpc getChatMessageById(ChatMessageIdRequest) returns (ChatMessageResponse);
+  rpc getAllChatMessages(Empty) returns (ChatMessageList);
+  rpc deleteChatMessageById(ChatMessageIdRequest) returns (DeleteChatMessageResponse);
+  rpc updateChatMessageById(ChatMessageRequest) returns (ChatMessageResponse);
+  rpc Chat(stream GrpcChatMessage) returns (stream GrpcChatMessage);
+}
+
+message ChatMessageRequest {
+  int64 id = 1;
+  string roomId = 2;
+  string senderId = 3;
+  string senderName = 4;
+  string content = 5;
+  int64 timestamp = 6;
+}
+
+message ChatMessageResponse {
+  int64 id = 1;
+  string roomId = 2;
+  string senderId = 3;
+  string senderName = 4;
+  string content = 5;
+  int64 timestamp = 6;
+}
+
+message ChatMessageIdRequest {
+  int64 id = 1;
+}
+
+message ChatMessageList {
+  repeated ChatMessageResponse chat_messages = 1;
+}
+
+message DeleteChatMessageResponse {
+  string message = 1;
+}
+
+message Empty {}
+

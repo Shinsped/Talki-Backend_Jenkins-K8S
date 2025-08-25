@@ -1,0 +1,42 @@
+grpc:
+  server:
+    port: 9090
+    enable-reflection: true
+
+spring:
+  profiles:
+    active: local
+
+  kafka:
+    bootstrap-servers: localhost:9092  # Kafka 미사용 시에도 오류 방지를 위해 더미 주소 유지
+    consumer:
+      group-id: audio-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"  # 배포 시 특정 패키지로 제한 필수
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/talki_db
+    username: talki1234
+    password: 123456781!
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  main:
+    allow-bean-definition-overriding: false
+
+

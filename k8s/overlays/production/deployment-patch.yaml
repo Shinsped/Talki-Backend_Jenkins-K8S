@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: talki-deployment
+spec:
+  template:
+    spec:
+      containers:
+      - name: talki-app
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "production"
+        - name: LOGGING_LEVEL_COM_LANGHAKERS_TALKI
+          value: "WARN"
+

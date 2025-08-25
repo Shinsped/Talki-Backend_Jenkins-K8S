@@ -1,0 +1,53 @@
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.langhakers.talki.audio.proto";
+option java_outer_classname = "UtteranceProto";
+
+enum Speaker {
+  USER = 0;
+  AI_AVATAR_1 = 1;
+  AI_AVATAR_2 = 2;
+}
+
+message NoParams {}
+
+service UtteranceService {
+  rpc createUtterance(UtteranceRequest) returns (UtteranceResponse);
+  rpc getUtteranceById(UtteranceIdRequest) returns (UtteranceResponse);
+  rpc getAllUtterances(NoParams) returns (UtteranceList);
+  rpc deleteUtteranceById(UtteranceIdRequest) returns (DeleteUtteranceResponse);
+  rpc updateUtteranceById(UtteranceRequest) returns (UtteranceResponse);
+}
+
+message UtteranceRequest {
+  int64 audio_id = 1;
+  Speaker speaker = 2;
+  string text = 3;
+  int64 start_millis = 4;
+  int64 end_millis = 5;
+}
+
+message UtteranceResponse {
+  int64 id = 1;
+  int64 audio_id = 2;
+  Speaker speaker = 3;
+  string text = 4;
+  int64 start_millis = 5;
+  int64 end_millis = 6;
+  string created_at = 7;
+}
+
+message UtteranceIdRequest {
+  int64 id = 1;
+}
+
+message UtteranceList {
+  repeated UtteranceResponse utterances = 1;
+}
+
+message DeleteUtteranceResponse {
+  string message = 1;
+}
+

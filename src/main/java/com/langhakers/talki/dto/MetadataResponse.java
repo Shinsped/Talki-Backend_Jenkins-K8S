@@ -1,0 +1,21 @@
+package com.langhakers.talki.dto;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class MetadataResponse {
+    private Long id;
+    private String sessionId;
+    private Long timestamp;
+    private String userId;
+    private String serverVersion;
+    private String type;
+    private String payload;
+}
+

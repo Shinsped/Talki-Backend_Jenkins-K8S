@@ -1,0 +1,41 @@
+
+syntax = "proto3";
+
+option java_package = "com.langhakers.talki.grpcclient.proto";
+option java_multiple_files = true;
+option java_outer_classname = "AiProto";
+
+service AiService {
+  rpc createAi(AiRequest) returns (AiResponse);
+  rpc getAiById(AiIdRequest) returns (AiResponse);
+  rpc getAllAis(GetAllAisRequest) returns (AiList);
+  rpc deleteAiById(AiIdRequest) returns (DeleteAiResponse);
+  rpc updateAiById(AiRequest) returns (AiResponse);
+}
+
+message AiRequest {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message AiResponse {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message AiIdRequest {
+  int64 id = 1;
+}
+
+message AiList {
+  repeated AiResponse ais = 1;
+}
+
+message DeleteAiResponse {
+  string message = 1;
+}
+
+message GetAllAisRequest {}  // Empty 대신 대체 메시지
+

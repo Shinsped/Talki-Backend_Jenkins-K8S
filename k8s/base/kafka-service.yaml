@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper-service
+  namespace: talki
+  labels:
+    app: zookeeper
+    component: messaging
+spec:
+  selector:
+    app: zookeeper
+  ports:
+  - port: 2181
+    targetPort: 2181
+    protocol: TCP
+    name: client
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-service
+  namespace: talki
+  labels:
+    app: kafka
+    component: messaging
+spec:
+  selector:
+    app: kafka
+  ports:
+  - port: 9092
+    targetPort: 9092
+    protocol: TCP
+    name: kafka
+  - port: 29092
+    targetPort: 29092
+    protocol: TCP
+    name: kafka-internal
+  type: ClusterIP
+

@@ -1,0 +1,124 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: talki-deployment
+  namespace: talki
+  labels:
+    app: talki-application
+    component: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: talki-application
+  template:
+    metadata:
+      labels:
+        app: talki-application
+        component: backend
+    spec:
+      initContainers:
+      - name: wait-for-mysql
+        image: busybox:1.35
+        command: ['sh', '-c']
+        args:
+        - |
+          until nc -z mysql-service 3306; do
+            echo "Waiting for MySQL to be ready..."
+            sleep 2
+          done
+          echo "MySQL is ready!"
+      - name: wait-for-kafka
+        image: busybox:1.35
+        command: ['sh', '-c']
+        args:
+        - |
+          until nc -z kafka-service 9092; do
+            echo "Waiting for Kafka to be ready..."
+            sleep 2
+          done
+          echo "Kafka is ready!"
+      containers:
+      - name: talki-app
+        image: talki-application:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http
+        - containerPort: 9090
+          name: grpc
+        envFrom:
+        - configMapRef:
+            name: talki-config
+        - secretRef:
+            name: talki-secret
+        volumeMounts:
+        - name: app-logs
+          mountPath: /app/logs
+        - name: app-uploads
+          mountPath: /app/uploads
+        livenessProbe:
+          httpGet:
+            path: /api/actuator/health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api/actuator/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+      volumes:
+      - name: app-logs
+        persistentVolumeClaim:
+          claimName: talki-logs-pvc
+      - name: app-uploads
+        persistentVolumeClaim:
+          claimName: talki-uploads-pvc
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: talki-logs-pvc
+  namespace: talki
+  labels:
+    app: talki-application
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: talki-uploads-pvc
+  namespace: talki
+  labels:
+    app: talki-application
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+

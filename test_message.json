@@ -1,0 +1,7 @@
+{
+  "session_id": "test_session",
+  "branch_id": "test_branch", 
+  "character_id": "assistant",
+  "message": "안녕하세요! 저는 AI 어시스턴트입니다. 도움이 필요하시면 언제든지 말씀해주세요!",
+  "message_type": "AI_SPEECH"
+}
